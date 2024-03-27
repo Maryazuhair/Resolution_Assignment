@@ -106,13 +106,25 @@ def skolemization(formula):
     start = 0
     end = len(formula)
     while start != end:
+        flag = True
         if (formula[start] == '∃'):
+            for j in range(start - 1, -1, -1):
+                if(formula[j] == "^"):
+                    break
+                if(formula[j] == "∀"):
+                    char2 = formula[j+1]
+                    flag = False
+
+
             char = formula[start + 1]
             formula = remove_char_at_position(formula, start)
             formula = remove_char_at_position(formula, start)
             for k in range(start+1,len(formula)):
                 if ( char== formula[k]):
-                    formula = replace_char_at_index(formula, k, "f(x)")
+                    if flag:
+                        formula = replace_char_at_index(formula, k, "c")
+                    else:
+                        formula = replace_char_at_index(formula, k, "f("+char2+")")
                 if(formula[k] == '∀' or formula[k] == '∃'):
                     break
             end-=2
@@ -165,11 +177,16 @@ def convert_to_cnf(formula):
                     result += str + '\n'
 
                     break
+    if(result == ""):
+        start = 0
+        end = len(formula)
+        while start != end:
+            if(formula[start] == "∧"):
+                formula = add_char_at_position(formula, start, "\n")
+                start+=1
+            start+=1
+        return formula
     return result
-
-
-
-
 
 def turn_conjunctions_into_clauses(formula):
     start = 0
@@ -197,22 +214,13 @@ def rename_variables_in_clauses(formula):
                             formula = replace_char_at_index(formula, l, chr(couneter))
 
 
-                    # while formula[count] != "\n":
-                    #     str += "ho"+formula[count]
-                    #     # if char == formula[count]:
-                    #     #     formula = replace_char_at_index(formula, k, chr(couneter))
-                    #     count+=1
-                    # str += "one"
             break
     return formula
-#
-#
-#             break
 
 
 
-# Example usage:
-# formula: 
+
+# test: ∃x(P(x)⇒Q(x))∧∀y¬P(y)
 formula = '∀x(B(x)⇒(∃y(Q(x,y)∧¬P(y))∧¬∃y(Q(x,y)∧Q(y,x))∧∀y(¬B(y)⇒¬E(x,y))))'
 print("Original Formula:", formula)
 print("\n")
@@ -259,5 +267,3 @@ formula = rename_variables_in_clauses(formula)
 print("After renaming variables:", formula)
 formula = turn_conjunctions_into_clauses(formula)
 print("Clauses after turning conjunctions into clauses:", formula)
-#
-
