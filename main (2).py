@@ -267,3 +267,4 @@ formula = rename_variables_in_clauses(formula)
 print("After renaming variables:", formula)
 formula = turn_conjunctions_into_clauses(formula)
 print("Clauses after turning conjunctions into clauses:", formula)
+
